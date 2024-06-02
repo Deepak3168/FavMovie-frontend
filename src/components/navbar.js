@@ -6,7 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 
-const NavBar = ({logout}) => {
+const NavBar = ({logout,user}) => {
     const navigate = useNavigate();
     const handleLogout =  async (event) => {
       event.preventDefault();
@@ -22,7 +22,7 @@ const NavBar = ({logout}) => {
             <Nav className="me-auto">
               <Nav.Link as={Link} to="/">Home</Nav.Link>
               <Nav.Link as={Link} to="/favourites">Favourites</Nav.Link>
-              <NavDropdown title="Profile" id="basic-nav-dropdown">
+              <NavDropdown title= "Profile" id="basic-nav-dropdown">
               <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
             </Nav>

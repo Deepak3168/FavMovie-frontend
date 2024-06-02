@@ -11,20 +11,7 @@ import MovieDetail from './components/detail';
 import axios from 'axios';
 import Favourite from './components/favourites';
 
-const getFavorites = async () => {
-  const xsToken = localStorage.getItem('token');
-  if (!xsToken) {
-    console.error('x-auth-token not found in localStorage.');
-    return [];
-  }
-  try {
-    const response = await MoviesDataService.getFavorites(xsToken);
-    return response.data || [];
-  } catch (error) {
-    console.log("Error fetching favorites:", error);
-    return [];
-  }
-};
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -185,7 +172,7 @@ function App() {
         <Route path="/login" element={<LoginForm login={login} message={message} />} />
         <Route path="/signup" element={<RegistrationForm rmessage={rmessage} signup={signup} />} />
         <Route path="/detail/:imdbID" element={auth ? <MovieDetail logout={logout} favourite={favourite} /> : <Navigate to="/login" />} />
-        <Route path="/favourites" element={auth ? <Favourite logout={logout} Favorites={favorites} /> : <Navigate to="/login" />} />
+        <Route path="/favourites" element={auth ? <Favourite logout={logout}  /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
   );

@@ -16,6 +16,7 @@ const MovieDetail = ({favourite,logout}) => {
   const [loading, setLoading] = useState(true);
 
 
+  
   useEffect(() => {
     const fetchMovieDetails = async () => {
       console.log("Extracted imdbID:", imdbID);
