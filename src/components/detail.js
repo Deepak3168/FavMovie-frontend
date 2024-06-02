@@ -19,16 +19,14 @@ const MovieDetail = ({favourite,logout}) => {
   
   useEffect(() => {
     const fetchMovieDetails = async () => {
-      console.log("Extracted imdbID:", imdbID);
       const imdb = String(imdbID)
-      console.log(imdb)
+      
       try {
         const response = await axios.get(`http://www.omdbapi.com/?i=${imdb}&apikey=5b5c9220`);
-        console.log(response.data)
+        
         setMovie(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching movie details:', error);
         setLoading(false);
       }
     };

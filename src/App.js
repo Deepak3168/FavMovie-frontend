@@ -29,17 +29,12 @@ function App() {
     const storedUser = localStorage.getItem('user');
 
     if (storedToken && storedUser) {
-      console.log('Token and user found in localStorage');
-      console.log('Token:', storedToken);
-      console.log('User:', storedUser);
-
       try {
         const parsedUser = JSON.parse(storedUser);
         setToken(storedToken);
         setUser(parsedUser);
         setAuth(true);
       } catch (e) {
-        console.error("Failed to parse user data from localStorage", e);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
@@ -73,7 +68,6 @@ function App() {
   async function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    console.log('Logged out successfully');
     setUser(null);
     setAuth(false);
   }
@@ -82,7 +76,6 @@ function App() {
     try {
       const response = await MoviesDataService.signup(user);
       if (response.status !== 201) {
-        console.log(response.data);
         setRMessage(response.data.message);
         return false;
       }
@@ -91,7 +84,6 @@ function App() {
       setAuth(true);
       return true;
     } catch (e) {
-      console.log('signup', e);
       setError(e.toString());
       setRMessage(e.response && e.response.status === 400 ? e.response.data.message : "Registration failed");
       return false;
@@ -103,7 +95,6 @@ function App() {
       const response = await MoviesDataService.login(user);
 
       if (response.status !== 200) {
-        console.log(response.data);
         setMessage(response.data);
         return false;
       }
@@ -118,11 +109,10 @@ function App() {
       setMessage('');
       setAuth(true);
       setUser(userData);
-      console.log("true");
+      
 
       return true;
     } catch (e) {
-      console.log('login', e);
       setError(e.toString());
       setMessage("Enter correct Email and Password");
       return false;
@@ -137,20 +127,17 @@ function App() {
       .then((response) => {
         if (response.data && response.data.Search) {
           setSearchResults(response.data.Search);
-          console.log(searchResults)
         } else {
           setSearchResults([]); // Clear results if no movies found
         }
       })
       .catch((error) => {
-        console.error("Error fetching the movie data:", error);
         setSearchResults([]); // Clear results in case of error
       });
   };
   const favourite = async (movie) => {
     const xsToken = localStorage.getItem('token')
     if (!xsToken) {
-        console.error('x-auth-token not found in localStorage.');
         return false;
     }
     try {
@@ -160,7 +147,6 @@ function App() {
         }
         return true;
     } catch (error) {
-        console.log("Error adding Favourite:", error);
         return false;
     }
   }
