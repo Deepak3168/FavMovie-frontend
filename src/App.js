@@ -72,30 +72,37 @@ function App() {
     setAuth(false);
   }
 
-  async function signup(user = null) {
+ 
+  async function signup(user) {
+    setLoading(true);
     try {
       const response = await MoviesDataService.signup(user);
       if (response.status !== 201) {
-        setRMessage(response.data.message);
+        setMessage(response.data.message);
+        setLoading(false);
         return false;
       }
-      setRMessage(response.data.message);
+      setMessage(response.data.message);
       setError('');
       setAuth(true);
+      setLoading(false);
       return true;
     } catch (e) {
       setError(e.toString());
-      setRMessage(e.response && e.response.status === 400 ? e.response.data.message : "Registration failed");
+      setMessage(e.response && e.response.status === 400 ? e.response.data.message : "Registration failed");
+      setLoading(false);
       return false;
     }
   }
 
   async function login(user) {
+    setLoading(true);
     try {
       const response = await MoviesDataService.login(user);
 
       if (response.status !== 200) {
         setMessage(response.data);
+        setLoading(false);
         return false;
       }
 
@@ -109,12 +116,13 @@ function App() {
       setMessage('');
       setAuth(true);
       setUser(userData);
-      
+      setLoading(false);
 
       return true;
     } catch (e) {
       setError(e.toString());
       setMessage("Enter correct Email and Password");
+      setLoading(false);
       return false;
     }
   }
@@ -122,11 +130,13 @@ function App() {
   if (loading) {
     return (<div>Loading...</div>)
   }
-  const searchMovie = (movieName) => {
-    axios.get(`http://www.omdbapi.com/?s=${movieName}&apikey=5b5c9220`)
+  const searchMovie =  async (movieName) => {
+    setLoading(true)
+    await axios.get(`http://www.omdbapi.com/?s=${movieName}&apikey=5b5c9220`)
       .then((response) => {
         if (response.data && response.data.Search) {
           setSearchResults(response.data.Search);
+          setLoading(false)
         } else {
           setSearchResults([]); // Clear results if no movies found
         }
