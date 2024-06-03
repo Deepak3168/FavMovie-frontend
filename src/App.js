@@ -22,7 +22,7 @@ function App() {
   const [message, setMessage] = useState("");
   const [rmessage, setRMessage] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  const [movies,setmovies] = useState(true)
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -42,28 +42,6 @@ function App() {
     setLoading(false); 
   }, []);
 
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const token = localStorage.getItem('token'); 
-        if (!token) {
-          setError('No token found');
-          setLoading(false);
-          return;
-        }
-
-        const response = await MoviesDataService.getFavorites(token);
-        setFavorites(response.data);
-      } catch (err) {
-        console.error('Error fetching favorites:', err);
-        setError('Failed to fetch favorites');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFavorites();
-  }, []);  // Ensure this useEffect runs once on component mount
 
   async function logout() {
     localStorage.removeItem('token');
@@ -130,21 +108,30 @@ function App() {
   if (loading) {
     return (<div>Loading...</div>)
   }
-  const searchMovie =  async (movieName) => {
-    setLoading(true)
-    await axios.get(`http://www.omdbapi.com/?s=${movieName}&apikey=5b5c9220`)
-      .then((response) => {
-        if (response.data && response.data.Search) {
-          setSearchResults(response.data.Search);
-          setLoading(false)
-        } else {
-          setSearchResults([]); // Clear results if no movies found
-        }
-      })
-      .catch((error) => {
-        setSearchResults([]); // Clear results in case of error
-      });
+  const searchMovie = async (movieName) => {
+    setLoading(true);
+    setmovies(true);
+  
+    try {
+      const response = await axios.get(`http://www.omdbapi.com/?s=${movieName}&apikey=5b5c9220`);
+  
+      if (response.data && response.data.Search) {
+        setSearchResults(response.data.Search);
+        setLoading(false)
+      } else {
+        console.log(response.data);
+        setmovies(false);
+        setSearchResults([]); 
+      }
+    } catch (error) {
+      console.error(error);
+      setSearchResults([]); 
+      setmovies(false); 
+    } finally {
+      setLoading(false);
+    }
   };
+  
   const favourite = async (movie) => {
     const xsToken = localStorage.getItem('token')
     if (!xsToken) {
@@ -164,7 +151,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={auth ? <Home logout={logout} searchMovie={searchMovie} searchResults={searchResults} /> : <Navigate to="/login" />} />
+        <Route path="/" element={auth ? <Home logout={logout} searchMovie={searchMovie} searchResults={searchResults}  movies={movies} /> : <Navigate to="/login" />} />
         <Route path="/login" element={<LoginForm login={login} message={message} />} />
         <Route path="/signup" element={<RegistrationForm rmessage={rmessage} signup={signup} />} />
         <Route path="/detail/:imdbID" element={auth ? <MovieDetail logout={logout} favourite={favourite} /> : <Navigate to="/login" />} />
